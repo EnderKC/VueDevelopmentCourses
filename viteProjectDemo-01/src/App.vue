@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import firstDemo from "./components/01-OptionsAPI.vue"
+import second from "./components/02-CompositionAPI.vue"
 </script>
 
 <template>
   <firstDemo></firstDemo>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <second></second>
   
 </template>
 

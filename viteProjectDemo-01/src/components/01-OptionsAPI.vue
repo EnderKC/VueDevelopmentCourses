@@ -20,11 +20,28 @@
   <p v-for="item in books">书名：{{ item.bookName }}价格：{{ item.price }}</p>
   <p>库存{{ bookInventory }}本书</p>
   <button @click="reduceBooks">减少书籍</button>
-  <p>{{ sellingBooks }}</p>
+  <p>库存的书（侦听器数组）</p>
+  <p v-for="item in sellingBooks">书名：{{ item.bookName }}价格：{{ item.price }}</p>
+</div>
+<hr>
+<div>
+  <p style="color: brown;">响应式数据基本数据 对象</p>
+  输入的值：<input v-model="dataMsg" /><br> 
+  旧值：{{oldMsg}} <br> <br>
+  <button @click="changePerson">改变名字</button>  <br>
+  有人改了名字,旧名字为{{ oldperson.namePerson }},新名字为{{ person.namePerson }}
 </div>
 </template>
 
 <script lang="ts">
+type Book = {
+  bookName:string,
+  price:number
+}
+type Person = {
+  namePerson:string,
+  age:number
+}
 export default {
   // data() 返回的属性将会成为响应式的状态
   // 并且暴露在 `this` 上
@@ -43,7 +60,17 @@ export default {
         {bookName:'MySql',price:35},
         {bookName:'FastAPI',price:40}
       ],
-      sellingBooks:[]
+      sellingBooks:[] as Book[],  // 类型注解
+      dataMsg:'' as string,
+      oldMsg:'' as string,
+      newPerson:{
+        namePerson:'雪碧',
+        age:18
+      },
+      oldperson: {
+        namePerson:'雪碧',
+        age:18
+      },
     }
   },
 
@@ -65,18 +92,9 @@ export default {
     reduceBooks(){
       this.books.pop()
     },
-    // watchBooks(newBooks:Array<{
-    //   name:string,
-    //   price:number
-    // }>, oldBooks:Array<{
-    //   name:string,
-    //   price:number
-    // }>){
-    //   this.bookMsg =  {
-    //     books:newBooks,
-    //     oldBooks:oldBooks
-    //   }
-    // }
+    changePerson(){
+      this.person = this.newPerson
+    }
   },
   // 计算属性
   computed:{
@@ -92,15 +110,40 @@ export default {
     }
   },
   // 侦听器 显示还有什么书，刚才卖出去了什么书
-  watch:{
-    books(newBooks, oldBooks){
-      this.sellingBooks = oldBooks
-      // this.watchBooks(newBooks,oldBooks)
-      this.sellingBooks.map((item,index)=>{
-          if(item in newBooks){
-            this.sellingBooks.splice(index,1)
-          }
-      })
+  watch: {
+    books: {
+      handler(newValue: Book[], oldValue: Book[]) {
+        if(newValue == oldValue){
+          this.sellingBooks = newValue
+        }
+        console.log('newValue:', newValue);
+        console.log('oldValue:', oldValue);
+        // this.sellingBooks = oldValue.filter(oldBook => !newValue.includes(oldBook));
+        // if (newValue && oldValue) {
+        // this.sellingBooks = oldValue.filter(oldBook => {
+        //   return !newValue.some(newBook =>
+        //     newBook.bookName === oldBook.bookName && newBook.price === oldBook.price
+        //   );
+        // });
+        // }
+        // console.log('newValue:', newValue);
+        // console.log('oldValue:', oldValue);
+      },
+      deep: true,
+      immediate: true // 立即触发侦听器
+    },
+    dataMsg:{
+      handler(newValue,oldValue){
+        this.oldMsg = oldValue
+        console.log(newValue)
+        }
+    },
+    person:{
+      handler(newValue:Person,oldValue:Person){
+        this.oldperson = oldValue
+        console.log(newValue)
+        },
+        deep:true
     }
   }
 }

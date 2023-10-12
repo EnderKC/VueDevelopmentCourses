@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import firstDemo from "./components/01-OptionsAPI.vue"
 import second from "./components/02-CompositionAPI.vue"
+import thired from "./components/03-SetUpDemo.vue"
 </script>
 
 <template>
@@ -14,6 +15,15 @@ import second from "./components/02-CompositionAPI.vue"
   <br>
   <br>
   <second></second>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <thired></thired>
   
 </template>
 

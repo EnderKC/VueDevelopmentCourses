@@ -34,6 +34,8 @@
 </template>
     
 <script lang="ts">
+// 导入相关函数
+import { ref, reactive, computed, watch } from 'vue'
 type Book = {
     bookName: string,
     price: number
@@ -44,107 +46,106 @@ type Person = {
 }
 
 export default {
-    // data() 返回的属性将会成为响应式的状态
-    // 并且暴露在 `this` 上
-    data() {
-        // data中的都是响应式数据
-        return {
-            count: 0,
-            person: {
-                namePerson: 'jack',
-                age: 18
-            },
-            books: [
-                { bookName: 'vue3', price: 20 },
-                { bookName: 'myBatis', price: 25 },
-                { bookName: 'SpringBoot', price: 30 },
-                { bookName: 'MySql', price: 35 },
-                { bookName: 'FastAPI', price: 40 }
-            ],
-            sellingBooks: [] as Book[],  // 类型注解
-            dataMsg: '' as string,
-            oldMsg: '' as string,
-            newPerson: {
-                namePerson: '雪碧',
-                age: 18
-            },
-            oldperson: {
-                namePerson: '雪碧',
-                age: 18
-            },
+    setup() {
+        // 定义变量
+        let count = ref(0)
+        let person = reactive({
+            namePerson: 'jack',
+            age: 18
+        })
+        let books = reactive([
+            { bookName: 'vue3', price: 20 },
+            { bookName: 'myBatis', price: 25 },
+            { bookName: 'SpringBoot', price: 30 },
+            { bookName: 'MySql', price: 35 },
+            { bookName: 'FastAPI', price: 40 }
+        ])
+        let sellingBooks: Book[] = reactive([])
+        let dataMsg = ref('')
+        let oldMsg = ref('')
+        let newPerson: Person = reactive({
+            namePerson: '雪碧',
+            age: 18
+        })
+        let oldperson: Person = reactive({
+            namePerson: '雪碧',
+            age: 18
+        })
+        // 定义方法
+        function increaseCount() {
+            count.value++
         }
-    },
-
-    // methods 是一些用来更改状态与触发更新的函数
-    // 它们可以在模板中作为事件处理器绑定
-    methods: {
-        increaseCount() {
-            this.count++
-        },
-        changeName() {
-            this.person.namePerson = 'mark'
-        },
-        increaseAge() {
-            this.person.age++
-        },
-        reduceAge() {
-            this.person.age--
-        },
-        reduceBooks() {
-            this.books.pop()
-        },
-        changePerson() {
-            this.person = this.newPerson
+        function changeName() {
+            person.namePerson = 'mark'
         }
-    },
-    // 计算属性
-    computed: {
-        isAdult() {
-            if (this.person.age >= 18) {
+        function increaseAge() {
+            person.age++
+        }
+        function reduceAge() {
+            person.age--
+        }
+        function reduceBooks() {
+            books.pop()
+        }
+        function changePerson() {
+            person.namePerson = newPerson.namePerson
+        }
+        // 计算属性
+        const isAdult = computed(() => {
+            if (person.age >= 18) {
                 return '成年'
             } else {
                 return '未成年'
             }
-        },
-        bookInventory() {
-            return this.books.length
-        }
-    },
-    // 侦听器 显示还有什么书，刚才卖出去了什么书
-    watch: {
-        books: {
-            handler(newValue: Book[], oldValue: Book[]) {
-                if (newValue == oldValue) {
-                    this.sellingBooks = newValue
-                }
-                console.log('newValue:', newValue);
-                console.log('oldValue:', oldValue);
-                // this.sellingBooks = oldValue.filter(oldBook => !newValue.includes(oldBook));
-                // if (newValue && oldValue) {
-                // this.sellingBooks = oldValue.filter(oldBook => {
-                //   return !newValue.some(newBook =>
-                //     newBook.bookName === oldBook.bookName && newBook.price === oldBook.price
-                //   );
-                // });
-                // }
-                // console.log('newValue:', newValue);
-                // console.log('oldValue:', oldValue);
-            },
-            deep: true,
-            immediate: true // 立即触发侦听器
-        },
-        dataMsg: {
-            handler(newValue, oldValue) {
-                this.oldMsg = oldValue
-                console.log(newValue)
+        })
+        const bookInventory = computed(() => {
+            return books.length
+        })
+        // 侦听器
+        watch(books, (newValue: Book[], oldValue: Book[]) => {
+            if (newValue == oldValue) {
+                sellingBooks.length = 0; // 清空sellingBooks
+                newValue.forEach((book) => {
+                    sellingBooks.push({ ...book }); // 展开操作符,将books的元素添加到sellingBooks
+                });
             }
-        },
-        person: {
-            handler(newValue: Person, oldValue: Person) {
-                this.oldperson = oldValue
-                console.log(newValue)
-            },
-            deep: true
+            console.log("sellingBooks", sellingBooks)
+            console.log('newValue:', newValue);
+            console.log('oldValue:', oldValue);
+        }
+        );
+        watch(dataMsg, (newValue, oldValue) => {
+            oldMsg.value = oldValue
+            console.log(newValue)
+        });
+        watch(
+            () => ({ ...person }), // 使用对象的深度克隆来观察 person 对象的变化
+            (newValue, oldValue) => {
+                // oldValue 包含 person 的旧状态，而不是同一引用的对象
+                oldperson = oldValue;
+                console.log(newValue);
+            }
+        );
+        return {
+            // 手动暴露出来
+            count,
+            person,
+            books,
+            sellingBooks,
+            dataMsg,
+            oldMsg,
+            newPerson,
+            oldperson,
+            // 暴露方法
+            increaseCount,
+            changeName,
+            increaseAge,
+            reduceAge,
+            reduceBooks,
+            changePerson,
+            // 计算属性
+            isAdult,
+            bookInventory
         }
     }
 }

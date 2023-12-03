@@ -7,7 +7,7 @@
 
 
 <script setup lang="ts">
-import { defineProps,reactive,ref } from "vue"
+import {ref } from "vue"
 import  {TodoItemInterface}  from "./todoItem.vue"
 import Bus from "../bus/bus"
 const itemName = ref('')

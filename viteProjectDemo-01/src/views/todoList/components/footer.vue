@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive, ref } from "vue"
+import {ref } from "vue"
 import Bus from "../bus/bus"
 let doneNumThis = ref(0)
 

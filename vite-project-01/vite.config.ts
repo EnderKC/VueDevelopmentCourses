@@ -1,11 +1,17 @@
 import { defineConfig } from 'vite'
+import { join } from "path";
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  // base: '/absproxy/5173',
+  base: './',
   server: {
-    port: 5173,
+    port: 5173
   },
+  resolve: {
+    alias: {
+      '@': join(__dirname, "src"),
+    }
+  }
 })

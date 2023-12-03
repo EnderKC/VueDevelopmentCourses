@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qwwq.mapper.CategoryMapper">
+
+    <resultMap id="CategoryResultMap" type="Category">
+        <id property="cateID" column="cate_id" />
+        <id property="cateName" column="cate_name" />
+        <collection property="goodsList" ofType="Goods" column="cate_id" select="selectGoodsByCategoryId"/>
+    </resultMap>
+
+    <select id="selectCategoryAndGoods" resultMap="CategoryResultMap">
+        SELECT c.*
+        FROM `mybatisplus-4`.category c
+        WHERE c.cate_id = #{cateId}
+    </select>
+
+    <select id="selectGoodsByCategoryId" resultType="Goods">
+        SELECT * FROM `mybatisplus-4`.goods WHERE cate_id = #{cateId}
+    </select>
+
+<!--    左连接方式查询-->
+    <select id="selectCategoryAndGoodsByJoin" resultType="Map">
+        select *
+        from `mybatisplus-4`.category c
+        join `mybatisplus-4`.goods g on c.cate_id = g.cate_id
+        where c.cate_id = #{cateId}
+    </select>
+
+    
+
+</mapper>

@@ -11,6 +11,12 @@
                 </el-col>
 
                 <el-col :xs="inputItim.xs" :sm="inputItim.sm" :md="inputItim.md" :lg="inputItim.lg" :xl="inputItim.xl">
+                    <el-form-item label="学 号 : " prop="studentNum">
+                        <el-input v-model="ruleForm.studentNum" type="text" size="large" autocomplete="off" clearable />
+                    </el-form-item>
+                </el-col>
+
+                <el-col :xs="inputItim.xs" :sm="inputItim.sm" :md="inputItim.md" :lg="inputItim.lg" :xl="inputItim.xl">
                     <el-form-item label="邮箱 : " prop="email">
                         <el-input v-model="ruleForm.email" type="text" size="large" autocomplete="off" clearable />
                     </el-form-item>
@@ -40,7 +46,7 @@
 
                 <el-row justify="center" class="registerFormItem" align="middle">
                     <el-col :xs="7" :sm="5" :md="4" :lg="3" :xl="3" align="middle">
-                        <el-button type="primary" size="large" tag="a" href="/" rel="noopener noreferrer"
+                        <el-button type="primary" size="large" tag="a" @click="toLogin()" rel="noopener noreferrer"
                             style="text-decoration-line: none;">返回登录</el-button>
                     </el-col>
                     <el-col :xs="7" :sm="5" :md="4" :lg="3" :xl="3" align="middle">
@@ -56,6 +62,10 @@
 import { reactive, ref, computed } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElNotification } from 'element-plus'
+import { getVerifyCode,register } from "@/api/register/register"
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const registerForm = ref<FormInstance>()
 
@@ -108,6 +118,7 @@ const verificationCodeClass = computed(() => {
 
 const ruleForm = reactive({
     qqNum: '',
+    studentNum:'',
     email: '',
     password: '',
     password2: '',
@@ -164,24 +175,61 @@ const validateCode = (rule: any, value: any, callback: any) => {
     callback()
 }
 
+const validateStudentNum = (rule: any, value: any, callback: any) => {
+    console.log(rule)
+    if (value === '') {
+        callback(new Error('学号为空,请认真填写~'))
+    }
+    callback()
+}
+
 const rules = reactive<FormRules<typeof ruleForm>>({
     qqNum: [{ validator: username, trigger: 'blur' }],
     password: [{ validator: validatePass, trigger: 'blur' }],
     password2: [{ validator: validatePass2, trigger: 'blur' }],
     email: [{ validator: validateEmail, trigger: 'blur' }],
-    code: [{ validator: validateCode, trigger: 'blur' }]
+    code: [{ validator: validateCode, trigger: 'blur' }],
+    studentNum: [{ validator: validateStudentNum, trigger: 'blur' }],
 })
 
 const sendCode = () => {
     // 验证邮箱输入框规则
     registerForm.value?.validateField('email', (valid) => {
         if (valid) {
-            // TODO: 发送验证码
-
-            ElNotification({
-                title: '提示',
-                message: '验证码已发送，请注意查收',
-                type: 'success',
+            // 发送验证码
+            const result = getVerifyCode(ruleForm.email)
+            result.then((res) => {
+                console.log(res)
+                if(res.status == 200){
+                    const data = res.data
+                    if(data.code == -1){
+                        ElNotification({
+                            title: '警告',
+                            message: data.msg,
+                            type: 'warning',
+                        })
+                    }
+                    else{
+                        ElNotification({
+                            title: '提示',
+                            message: '验证码发送成功，请注意查收',
+                            type: 'success',
+                        })
+                    }}
+                else{
+                        ElNotification({
+                            title: '警告',
+                            message: '验证码发送失败，请稍后再试',
+                            type: 'warning',
+                        })
+                    }
+            }).catch((err) => {
+                console.log(err)
+                ElNotification({
+                    title: '警告',
+                    message: '验证码发送失败，请稍后再试'+err,
+                    type: 'warning',
+                })
             })
         } else {
             ElNotification({
@@ -189,7 +237,6 @@ const sendCode = () => {
                 message: '您输入的邮箱有问题，请检查后再试',
                 type: 'warning',
             })
-
         }
     })
 }
@@ -203,8 +250,46 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 message: '正在注册，请稍后',
                 type: 'info',
             })
-            // TODO: 注册
-
+            // 注册
+            register(ruleForm.qqNum,ruleForm.studentNum,ruleForm.email,ruleForm.password,ruleForm.password2,ruleForm.code).then((res) => {
+                console.log(res)
+                if(res.status == 200){
+                    const data = res.data
+                    console.log(data)
+                    if(data.code == -1){
+                        ElNotification({
+                            title: '警告',
+                            message: data.msg,
+                            type: 'warning',
+                        })
+                    }
+                    else{
+                        ElNotification({
+                            title: '提示',
+                            message: '注册成功',
+                            type: 'success',
+                        })
+                        // 延迟2s跳转到登录页面
+                        setTimeout(() => {
+                            window.location.href = '/'
+                        }, 2000)
+                    }
+                }
+                else{
+                    ElNotification({
+                        title: '警告',
+                        message: '注册失败，请稍后再试',
+                        type: 'warning',
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+                ElNotification({
+                    title: '警告',
+                    message: '注册失败，请稍后再试'+err,
+                    type: 'warning',
+                })
+            })
         } else {
             ElNotification({
                 title: '警告',
@@ -214,6 +299,13 @@ const submitForm = (formEl: FormInstance | undefined) => {
             console.log('error submit!')
             return false
         }
+    })
+}
+
+// 跳转到登录页
+const toLogin = () => {
+    router.push({
+        name: 'login'
     })
 }
 

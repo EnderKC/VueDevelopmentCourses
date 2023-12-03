@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive, watch } from "vue"
+import {reactive, watch,computed } from "vue"
 import todoItem from "./todoItem.vue"
 import Bus from "../bus/bus"
 import { TodoItemInterface } from "./todoItem.vue"
@@ -23,6 +23,7 @@ let todoList: TodoItemInterface[] = reactive([
         isDone: false
     }
 ])
+
 // 接收子组件传递过来的消息
 const deleteTask = (todoitem: TodoItemInterface) => {
     // 数组中找到这个元素
@@ -32,12 +33,21 @@ const deleteTask = (todoitem: TodoItemInterface) => {
     todoList.splice(index, 1)
     console.log(todoList)
 }
+
+let doneNum = computed(()=>{
+    return todoList.filter((item)=>{
+        return item.isDone
+    }).length
+    console.log(doneNum)
+})
+
 // 接收bus传递过来的消息
 Bus.on('add-task', (todoitem: TodoItemInterface) => {
     todoList.push(todoitem)
 })
+
 Bus.on('deleteAllDoneTask', () => {
-    for (let i = 0; i < todoList.length; i++) {
+    for (let i = 0; i <= doneNum.value; i++) {
         let index = todoList.findIndex((item) => {
             return item.isDone == true
         })

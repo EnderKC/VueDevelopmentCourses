@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qwwq.mapper.GoodsMapper">
+    <!--    查-->
+    <select id="selectGoods" resultType="Map">
+        select category.cate_name, supplier.supplier_name, goods.*
+        from `mybatisplus-4`.goods,
+             `mybatisplus-4`.category,
+             `mybatisplus-4`.supplier
+        where `mybatisplus-4`.goods.cate_id = `mybatisplus-4`.category.cate_id
+          and `mybatisplus-4`.goods.supplier_id = `mybatisplus-4`.supplier.supplier_id
+          and goods_id = #{goodsId}
+    </select>
+
+</mapper>

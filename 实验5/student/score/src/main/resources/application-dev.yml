@@ -1,0 +1,87 @@
+spring:
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
+  servlet:
+    session:
+      # session过期时间，单位：秒
+      timeout: 10
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    druid:
+      # 主库数据源
+      master:
+        url: jdbc:mysql://localhost:3306/studentmanager-5?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+        username: root
+        password: 20021001
+      # 初始连接数
+      initialSize: 10
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 500
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 30000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 30000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 90000
+      keepAlive: true
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      ########## 配置WebStatFilter，用于采集web关联监控的数据 ##########
+      webStatFilter:
+        enabled: true                   # 启动 StatFilter
+        url-pattern: /*                 # 过滤所有url
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" # 排除一些不必要的url
+        session-stat-enable: true       # 开启session统计功能
+        session-stat-max-count: 1000    # session的最大个数,默认100
+      ########## 配置StatViewServlet（监控页面），用于展示Druid的统计信息 ##########
+      statViewServlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false              # 不允许清空统计数据,重新计算
+        login-username: root            # 配置监控页面访问密码
+        login-password: 123456
+        allow: 127.0.0.1           # 允许访问的地址，如果allow没有配置或者为空，则允许所有访问
+        deny:
+      filter:
+        stat:
+          enabled: true
+          dbType: mysql
+          log-slow-sql: true
+          slow-sql-millis: 3000
+          merge-sql: true
+        wall:
+          config:
+            multi-statement-allow: true
+
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  typeAliasesPackage: com.example.score.entity
+  type-handlers-package: com.example.score.typeHandler  # 设置TypeHandler
+  configurationProperties:
+    blobType: BLOB
+    boolValue: TRUE
+    prefix:
+  configuration:
+    map-underscore-to-camel-case: false
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+    #org.apache.ibatis.logging.stdout.StdOutImpl 控制台打印sql语句方便调试sql语句执行错误
+    #org.apache.ibatis.logging.log4j2.Log4j2Impl:这个不在控制台打印查询结果,但是在log4j中打印
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

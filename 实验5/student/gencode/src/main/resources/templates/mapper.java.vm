@@ -1,0 +1,42 @@
+package ${package.Mapper};
+
+import ${package.Entity}.${entity};
+import ${superMapperClassPackage};
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+/**
+ * <p>
+ * $!{table.comment} Mapper 接口
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${kotlin})
+interface ${table.mapperName} : ${superMapperClass}<${entity}>
+#else
+public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
+
+    /**
+     * 根据查询条件查询实体列表
+     * @param criteria 查询条件
+     * @return List 返回的结果列表
+     */
+    List<${entity}> listByCriteria(${entity} criteria);
+
+    /**
+     *  根据条件删除
+     * @param criteria 删除条件
+     * @return int 删除的记录数
+     */
+    @ResultType(Integer.class)
+    int deleteByCriteria(${entity} criteria);
+
+}
+#end

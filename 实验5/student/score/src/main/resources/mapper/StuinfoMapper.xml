@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.score.mapper.StuinfoMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.score.entity.Stuinfo">
+        <id column="stuid" property="stuid"/>
+        <result column="stuname" property="stuname"/>
+        <result column="gender" property="gender"/>
+        <result column="birthday" property="birthday"/>
+        <result column="classname" property="classname"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        SELECT stuid,
+               stuname,
+               gender,
+               birthday,
+               classname,
+               address
+        FROM stuinfo a
+    </sql>
+    <select id="listByCriteria" parameterType="Stuinfo" resultMap="BaseResultMap">
+        <include refid="selectVo">
+        </include>
+        <where>
+            <if test="beginTime != null and beginTime != ''">
+                AND a.birthday &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND a.birthday &lt;= #{endTime}
+            </if>
+            <if test="stuname != null and stuname != ''">
+                AND a.stuname like concat('%', #{stuname}, '%')
+            </if>
+            <if test="stuid != null and stuid != ''">
+                AND a.stuid like concat('%', #{stuid}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND a.gender == #{gender}
+            </if>
+        </where>
+    </select>
+    <!--
+        <insert id="batchSave" parameterType="java.util.List" >
+            insert into stuinfo(user_id,role_id)
+            values
+            <foreach collection="list" item="item" index="index" separator="," >
+                (
+                #{item.userId},
+                #{item.roleId}
+                )
+            </foreach>
+        </insert>
+
+        <update id="updateById" parameterType="Stuinfo">
+             update stuinfo
+             set login_name           = #{loginName,jdbcType=VARCHAR},
+                 sex                  = #{sex,jdbcType=CHAR},
+                 avatar               = #{avatar,jdbcType=VARCHAR},
+                 mobile               = #{mobile,jdbcType=VARCHAR}
+             where user_id = #{userId,jdbcType=BIGINT}
+        </update>
+    -->
+    <delete id="deleteByCriteria" parameterType="Stuinfo">
+        delete a
+        from stuinfo a
+        <where>
+            <if test="beginTime != null and beginTime != ''">
+                AND a.birthday &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND a.birthday &lt;= #{endTime}
+            </if>
+            <if test="stuname != null and stuname != ''">
+                AND a.stuname like concat('%', #{stuname}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND a.gender == #{gender}
+            </if>
+        </where>
+    </delete>
+</mapper>

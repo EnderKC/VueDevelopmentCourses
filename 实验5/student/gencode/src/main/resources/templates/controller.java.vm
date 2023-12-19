@@ -1,0 +1,195 @@
+package ${package.Controller};
+
+
+import org.springframework.web.bind.annotation.RequestMapping;
+    #if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+    #else
+import org.springframework.stereotype.Controller;
+    #end
+    #if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+    #end
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+#if(${springdoc})
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+#end
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import com.example.common.core.BaseController;
+import com.example.common.core.Constants;
+import com.example.common.core.R;
+import com.example.common.util.StringUtils;
+import java.util.List;
+
+import ${package.Service}.${table.serviceName};
+import ${package.Entity}.${entity};
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#set($comment=${table.comment})
+#if(${comment.indexOf("表")}!=-1)
+    #if(${comment.length()}>7)
+        #set($end=7)
+    #else
+        #set($end=$comment.length() - 1)
+    #end
+    #set($comment=$comment.substring(0,$end))
+#end
+
+#foreach($field in ${table.fields})
+    #if(${field.keyFlag})
+        #set($keyPropertyName=${field.propertyName})
+        #set($keyPropertyType=${field.propertyType})
+        #set($getterName=${field.capitalName})
+    #end
+#end
+
+@Slf4j
+#if(${springdoc})
+@Tag(name = "${comment}管理接口", description = "${comment}管理接口")
+#end
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.package})/${package.package}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+#set($str=${table.serviceName})
+#set($service=$str.substring(0,1).toLowerCase()+$str.substring(1))
+
+    @Autowired
+    private ${table.serviceName} $service;
+
+    /**
+    * 根据id查询实体
+    */
+    @GetMapping("getById/{id}")
+    public R getById(@PathVariable("id") ${keyPropertyType} id)
+    {
+        if(id==null)
+        {
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+        return R.ok().put("data", ${service}.getEntityById(id));
+    }
+
+    /**
+    * 根据条件查询实体列表
+    */
+    @PostMapping("list")
+    public R list(@RequestBody ${entity} criteria,@RequestParam("pageNum") Integer pageNum,@RequestParam("pageSize") Integer pageSize)
+    {
+        if(criteria==null||pageNum==null||pageNum< 1||pageSize==null||pageSize< 1){
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+        PageHelper.startPage(pageNum,pageSize);
+        List<${entity}> list= ${service}.listByCriteria(criteria);
+
+        PageInfo<${entity}> result=new PageInfo<${entity}>(list);
+        return R.ok().put("data",result);
+    }
+
+    /**
+    * 新增实体
+    */
+    @PostMapping("add")
+    public R add(@RequestBody ${entity} entity)
+    {
+        if(entity==null){
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+
+        return toAjax(${service}.saveEntity(entity));
+    }
+
+    /**
+    * 批量新增实体
+    */
+    @PostMapping("batchSave")
+    public R batchSave(@RequestBody List<${entity}> list)
+    {
+        if(list==null){
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+
+        return toAjax(${service}.batchSaveEntity(list));
+    }
+
+    /**
+    * 更新实体
+    */
+    @PutMapping("update")
+    public R update(@RequestBody ${entity} entity)
+    {
+        if(entity==null){
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+
+        return toAjax(${service}.updateEntity(entity));
+    }
+
+    /**
+    * 删除实体
+    */
+    @DeleteMapping("/deleteById/{id}")
+    public R delete(@PathVariable("id") ${keyPropertyType} id)
+    {
+        if(id==null){
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+        return R.ok().put("data",${service}.deleteById(id));
+    }
+
+    /**
+    * 批量删除实体
+    */
+    @DeleteMapping("deleteByIds")
+    public R batchDelete(@RequestParam String ids)
+    {
+        if(StringUtils.isBlank(ids))
+        {
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+        return R.ok().put("data",${service}.deleteByIds(ids));
+    }
+
+    /**
+    * 批量删除实体
+    */
+    @DeleteMapping("deleteByCriteria")
+    public R batchDeleteByCriteria(@RequestBody ${entity} criteria)
+    {
+        if(criteria==null)
+        {
+            return R.error(Constants.PARAMETER_NULL_MSG);
+        }
+
+        return R.ok().put("data",${service}.deleteByCriteria(criteria));
+    }
+}
+
+#end

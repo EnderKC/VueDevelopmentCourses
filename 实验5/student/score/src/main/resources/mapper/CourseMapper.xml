@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.score.mapper.CourseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.score.entity.Course">
+        <id column="cid" property="cid"/>
+        <result column="cname" property="cname"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        SELECT
+            cid, cname
+        FROM course a
+    </sql>
+    <select id="listByCriteria" parameterType="Course" resultMap="BaseResultMap">
+        <include refid="selectVo"></include>
+        <where>
+            <if test="cname != null and cname != ''">
+                AND a.cname like concat('%', #{cname}, '%')
+            </if>
+        </where>
+    </select>
+<!--
+    <insert id="batchSave" parameterType="java.util.List" >
+        insert into course(user_id,role_id)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (
+            #{item.userId},
+            #{item.roleId}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="Course">
+         update course
+         set login_name           = #{loginName,jdbcType=VARCHAR},
+             sex                  = #{sex,jdbcType=CHAR},
+             avatar               = #{avatar,jdbcType=VARCHAR},
+             mobile               = #{mobile,jdbcType=VARCHAR}
+         where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+-->
+    <delete id="deleteByCriteria" parameterType="Course">
+        delete a from course a
+        <where>
+            <if test="cname != null and cname != ''">
+                AND a.cname like concat('%', #{cname}, '%')
+            </if>
+        </where>
+    </delete>
+
+</mapper>

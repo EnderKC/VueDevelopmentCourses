@@ -278,7 +278,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 else{
                     ElNotification({
                         title: '警告',
-                        message: '注册失败，请稍后再试',
+                        message: '注册失败，请稍后再试'+res.status,
                         type: 'warning',
                     })
                 }
@@ -286,7 +286,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 console.log(err)
                 ElNotification({
                     title: '警告',
-                    message: '注册失败，请稍后再试'+err,
+                    message: '注册失败，服务器出现问题'+err,
                     type: 'warning',
                 })
             })

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+    #if(${enableCache})
+    <!-- 开启二级缓存 -->
+    <cache type="${cacheClassName}"/>
+
+    #end
+    #if(${baseResultMap})
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+        #foreach($field in ${table.fields})
+            #if(${field.keyFlag})##生成主键排在第一位
+        <id column="${field.name}" property="${field.propertyName}"/>
+            #end
+        #end
+        #foreach($field in ${table.fields})
+            #if(!${field.keyFlag})##生成普通字段
+        <result column="${field.name}" property="${field.propertyName}"/>
+            #end
+        #end
+        #foreach($field in ${table.commonFields})##生成公共字段
+        <result column="${field.name}" property="${field.propertyName}"/>
+        #end
+    </resultMap>
+
+    #end
+    #if(${baseColumnList})
+    <sql id="selectVo">
+        SELECT
+            ${table.fieldNames}
+#foreach($field in ${table.commonFields})
+            ,a.${field.name}
+#end
+        FROM ${table.name} a
+    </sql>
+    <select id="listByCriteria" parameterType="${entity}" resultMap="BaseResultMap">
+        <include refid="selectVo"></include>
+        <where>
+<!--
+            <if test="beginTime != null and beginTime != ''">
+                AND a.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND a.create_time &lt;= #{endTime}
+            </if>
+            <if test="loginName != null and loginName != ''">
+                AND a.login_name like concat('%', #{loginName}, '%')
+            </if>
+-->
+        </where>
+    </select>
+<!--
+    <insert id="batchSave" parameterType="java.util.List" >
+        insert into ${table.name}(user_id,role_id)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (
+            #{item.userId},
+            #{item.roleId}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="${entity}">
+         update ${table.name}
+         set login_name           = #{loginName,jdbcType=VARCHAR},
+             sex                  = #{sex,jdbcType=CHAR},
+             avatar               = #{avatar,jdbcType=VARCHAR},
+             mobile               = #{mobile,jdbcType=VARCHAR}
+         where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+-->
+    <delete id="deleteByCriteria" parameterType="${entity}">
+        delete a from ${table.name} a
+        <where>
+<!--
+            <if test="beginTime != null and beginTime != ''">
+                AND a.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND a.create_time &lt;= #{endTime}
+            </if>
+-->
+        </where>
+    </delete>
+    #end
+
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.score.mapper.CourseChoosingMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.score.entity.CourseChoosing">
+        <result column="stuid" property="stuid"/>
+        <result column="cid" property="cid"/>
+        <result column="cdate" property="cdate"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        SELECT stuid,
+               cid,
+               cdate
+        FROM course_choosing a
+    </sql>
+    <select id="listByCriteria" parameterType="CourseChoosing" resultMap="BaseResultMap">
+        <include refid="selectVo">
+        </include>
+        <where>
+            <if test="cdate != null and cdate != ''">
+                AND a.cdate = #{cdate}
+            </if>
+            <if test="stuid != null and stuid != ''">
+                AND a.stuid = #{stuid}
+            </if>
+            <if test="cid != null and cid != ''">
+                AND a.cid = #{cid}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="CourseChoosing">
+        insert into course_choosing (stuid, cid, cdate)
+        values (#{stuid}, #{cid}, #{cdate})
+    </insert>
+
+    <delete id="deleteById" parameterType="CourseChoosing">
+        delete
+        from course_choosing
+        where stuid = #{stuid}
+          and cid = #{cid}
+    </delete>
+    <delete id="deleteByCriteria" parameterType="CourseChoosing">
+        delete a
+        from course_choosing a
+        <where>
+            <where>
+                <if test="cdate != null and cdate != ''">
+                    AND a.cdate = #{cdate}
+                </if>
+                <if test="stuid != null and stuid != ''">
+                    AND a.stuid = #{stuid}
+                </if>
+                <if test="cid != null and cid != ''">
+                    AND a.cid = #{cid}
+                </if>
+            </where>
+        </where>
+    </delete>
+</mapper>

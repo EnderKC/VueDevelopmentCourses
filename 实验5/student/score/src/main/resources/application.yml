@@ -1,0 +1,15 @@
+server:
+  port: 8025
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-request-size: 500MB
+      max-file-size: 500MB
+
+#控制日志的输出，级别高于日志配置文件中的设置
+logging:
+  level:
+    com.demo: debug
+    org.springframework: warn

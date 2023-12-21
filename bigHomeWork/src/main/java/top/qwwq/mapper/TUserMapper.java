@@ -1,5 +1,6 @@
 package top.qwwq.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import top.qwwq.pojo.TUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author EnderKC
  * @since 2023-12-21
  */
+@Mapper
 public interface TUserMapper extends BaseMapper<TUser> {
 
 }

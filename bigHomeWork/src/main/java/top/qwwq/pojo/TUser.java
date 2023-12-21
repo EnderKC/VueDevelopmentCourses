@@ -1,15 +1,15 @@
 package top.qwwq.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author EnderKC
@@ -18,9 +18,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("t_user")
-@ApiModel(value = "TUser对象", description = "")
 public class TUser implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String id;

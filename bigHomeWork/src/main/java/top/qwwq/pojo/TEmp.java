@@ -1,10 +1,10 @@
 package top.qwwq.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,9 +19,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("t_emp")
-@ApiModel(value = "TEmp对象", description = "")
 public class TEmp implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String id;

@@ -18,8 +18,8 @@ spring:
       login-timeout: 5
       # 池中维护的最小空闲连接数
       minimum-idle: 10
-    username: enderkc
-    password: QWEqwe123
+    username: root
+    password: 20021001
     #    url: jdbc:mysql://43.134.115.204:3306/NewUrpEduSystem?characterEncoding=UTF-8&useUnicode=true&serverTimezone=GMT&connectTimeout=15000
     url: jdbc:mysql://127.0.0.1:3306/bighomework?characterEncoding=UTF-8&useUnicode=true&serverTimezone=GMT&connectTimeout=15000
     driver-class-name: com.mysql.cj.jdbc.Driver

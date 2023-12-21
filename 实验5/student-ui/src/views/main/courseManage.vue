@@ -239,7 +239,7 @@ function clickOK() {
 // 删除课程
 const remove = (record) => {
   Modal.confirm({
-    title: `你确定要删除${record.username}吗?`,
+    title: `你确定要删除${record.cname}吗?`,
     icon: createVNode(ExclamationCircleOutlined),
     content: '',
     okText: '确定',

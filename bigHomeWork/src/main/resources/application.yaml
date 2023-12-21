@@ -1,0 +1,36 @@
+server:
+  port: 8082
+spring:
+  #  连接数据库
+  datasource:
+    hikari:
+      # 连接池最大连接数，默认是 10
+      maximum-pool-size: 60
+      # 链接超时时间，默认 30000(30 秒)
+      connection-timeout: 60000
+      # 空闲连接存活最大时间，默认 600000(10 分钟)
+      idle-timeout: 60000
+      # 连接将被测试活动的最大时间量
+      validation-timeout: 3000
+      # 此属性控制池中连接的最长生命周期，值 0 表示无限生命周期，默认 1800000(30 分钟)
+      max-lifetime: 60000
+      # 连接到数据库时等待的最长时间(秒)
+      login-timeout: 5
+      # 池中维护的最小空闲连接数
+      minimum-idle: 10
+    username: enderkc
+    password: QWEqwe123
+    #    url: jdbc:mysql://43.134.115.204:3306/NewUrpEduSystem?characterEncoding=UTF-8&useUnicode=true&serverTimezone=GMT&connectTimeout=15000
+    url: jdbc:mysql://127.0.0.1:3306/bighomework?characterEncoding=UTF-8&useUnicode=true&serverTimezone=GMT&connectTimeout=15000
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # redis
+  data:
+    redis:
+      database: 0
+      host: 127.0.0.1
+      password: ''
+      port: 6379
+
+mybatis-plus:
+  type-aliases-package: top.qwwq.pojo
+  mapper-locations: classpath:mapper/*.xml

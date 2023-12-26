@@ -1,37 +1,45 @@
 package top.qwwq.service.impl;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import top.qwwq.mapper.UserMapper;
+import top.qwwq.pojo.User;
+import top.qwwq.service.EmailService;
+import top.qwwq.service.SystemService;
+import top.qwwq.utils.JwtUtil;
 import top.qwwq.utils.RedisUtil;
 import top.qwwq.utils.ResponseVo;
 
 @Service
 @Slf4j
-public class SystemServiceImpl {
+public class SystemServiceImpl implements SystemService {
 
     UserMapper userMapper;
     RedisUtil redisUtil;
     EmailService emailService;
-    public SystemServiceImpl(StudentMapper studentMapper,RedisUtil redisUtil,EmailService emailService) {
-        this.studentMapper = studentMapper;
+    public SystemServiceImpl(UserMapper userMapper,RedisUtil redisUtil,EmailService emailService) {
+        this.userMapper = userMapper;
         this.redisUtil = redisUtil;
         this.emailService = emailService;
     }
 
     @Override
-    public ResponseVo<JSONObject> login(String qqNum, String password) {
+    public ResponseVo<JSONObject> login(String username, String password) {
         // 处理对比密码
-        Student student = studentMapper.queryByqqNum(qqNum);
-        if(student != null){
+//        Student student = studentMapper.queryByqqNum(qqNum);
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("user_name",username);
+        User user = userMapper.selectOne(userQueryWrapper);
+        if(user != null){
             // TODO: 省略一下加密的步骤
-            log.info("student.getPassword() = " + student.getPassword());
-            if(student.getPassword().equals(password)){
-                String token = getToken(student);
+            log.info("student.getPassword() = " + user.getUserPassword());
+            if(user.getUserPassword().equals(password)){
+                String token = getToken(user);
                 JSONObject tokenJson = new JSONObject();
                 tokenJson.put("token",token);
                 return  new ResponseVo<>(0, "登录成功", tokenJson);
@@ -40,20 +48,20 @@ public class SystemServiceImpl {
         return new ResponseVo<>(-1, "登录失败");
     }
 
-    private String getToken(Student student){
+    private String getToken(User user){
         // 生成token
-        String token = JwtUtil.createToken(student);
+        String token = JwtUtil.createToken(user);
         // 为了过期续签，将token存入redis，并设置超时时间
         redisUtil.set(token, token, JwtUtil.getExpireTime());
         return token;
     }
 
     @Override
-    public Student getUserFromToken(ServletRequest request, ServletResponse response) {
+    public User getUserFromToken(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String authorization = httpServletRequest.getHeader("Authorization");
-        String studentID = JwtUtil.parseTokenStuId(authorization);
-        return studentMapper.queryByStudentID(studentID);
+        String ID = JwtUtil.parseTokenId(authorization);
+        return userMapper.selectById(ID);
     }
 
     /**

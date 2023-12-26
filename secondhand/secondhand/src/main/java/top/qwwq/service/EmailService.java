@@ -3,7 +3,7 @@ package top.qwwq.service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import top.qwwq.service.util.GetVerification;
+import top.qwwq.utils.GetVerification;
 
 @Service
 public class EmailService {

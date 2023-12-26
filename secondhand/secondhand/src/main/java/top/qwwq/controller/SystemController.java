@@ -5,11 +5,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import top.qwwq.pojo.User;
+import top.qwwq.service.SystemService;
+import top.qwwq.utils.ResponseVo;
 
 @RestController
 public class SystemController {
     SystemService systemService;
-    public SystemAPI(SystemService systemService) {
+    public SystemController(SystemService systemService) {
         this.systemService = systemService;
     }
 
@@ -25,8 +28,8 @@ public class SystemController {
      * 用户的登录接口
      * */
     @PostMapping("/login")
-    public ResponseVo<JSONObject> login(@RequestBody Student student) {
-        return systemService.login(student.getQqNum(),student.getPassword());
+    public ResponseVo<JSONObject> login(@RequestBody User user) {
+        return systemService.login(user.getUserName(),user.getUserPassword());
     }
 
     /*

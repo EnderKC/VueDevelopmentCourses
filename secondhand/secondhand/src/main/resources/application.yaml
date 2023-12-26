@@ -30,6 +30,22 @@ spring:
       host: 127.0.0.1
       password: ''
       port: 6379
+  # 收验证码
+  mail:
+    host: smtp.qq.com
+    username: enderkc@qq.com
+    port: 465
+    password: nfkldjfsqplkcbce
+    default-encoding: utf-8
+    # 配置 SSL 加密工厂
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          debug: true
 
 mybatis-plus:
   type-aliases-package: top.qwwq.pojo

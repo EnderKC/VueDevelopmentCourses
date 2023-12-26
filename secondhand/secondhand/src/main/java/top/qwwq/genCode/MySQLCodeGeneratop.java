@@ -44,6 +44,7 @@ public class MySQLCodeGeneratop {
                             .addInclude("role")
                             .addInclude("role_permission")
                             .addInclude("user")
+                            .addInclude("goods")
                             .addInclude("user_info")
                             .entityBuilder()
                             .enableLombok(); // 开启lombok模式

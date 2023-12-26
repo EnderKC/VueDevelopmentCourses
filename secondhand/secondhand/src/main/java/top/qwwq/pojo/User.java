@@ -1,9 +1,9 @@
 package top.qwwq.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.io.Serial;
 import java.io.Serializable;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,24 +17,19 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@ApiModel(value = "User对象", description = "用户表")
 public class User implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("用户id 主键")
     @TableId("user_id")
     private String userId;
 
-    @ApiModelProperty("用户名 唯一")
     private String userName;
 
-    @ApiModelProperty("用户邮箱")
     private String userEmail;
 
-    @ApiModelProperty("用户密码")
     private String userPassword;
 
-    @ApiModelProperty("用户角色")
     private Integer userRole;
 }

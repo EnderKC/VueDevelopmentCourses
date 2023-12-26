@@ -43,7 +43,7 @@ import { addEmitHelper } from 'typescript';
                     </a-form-item>
                     <a-form-item has-feedback label="生日" name="bir" :rules="[
                     ]">
-                        <a-date-picker v-model:value="dialogFormState.bir" />
+                        <a-date-picker type="date" v-model:value="dialogFormState.bir" />
                     </a-form-item>
                 </a-form>
             </a-modal>
@@ -57,10 +57,12 @@ import { reactive, ref } from 'vue'
 import { notification } from 'ant-design-vue';
 import { useRouter } from 'vue-router'
 import EmpApi from '@/api/empApi'
+import { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import { Modal } from 'ant-design-vue'
-import { ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import { createVNode, h } from 'vue'
+import { ExclamationCircleOutlined} from '@ant-design/icons-vue'
+import { createVNode} from 'vue'
+import utc from 'dayjs/plugin/utc'
 
 const router = useRouter()
 const empApi = new EmpApi()
@@ -68,13 +70,25 @@ const empData = reactive({
     empList: []
 })
 
+dayjs.extend(utc)
+
+// 定义表单数据项接口
+interface DialogFormState {
+  id: string
+  name: string
+  salary: number
+  age: string
+  bir: Dayjs | undefined
+}
+
+
 // 对话框表单数据
-let dialogFormState = reactive({
+let dialogFormState:DialogFormState = reactive({
     id: '',
     name: '',
     salary: '',
     age: '',
-    bir: null
+    bir: undefined
 })
 
 // 定义表格标题列
@@ -121,8 +135,16 @@ const setModalVisible = (open: boolean) => {
 // 更新课程
 const update = (record) => {
     dialogTitle.value = '更新员工'
-    record.bir = dayjs(record.bir)
-    dialogFormState = record
+    const {id,name,salary,age,bir}=record
+    dialogFormState = reactive({
+        id,
+        name,
+        salary,
+        age,
+        bir
+    })
+    dialogFormState.bir=dayjs(bir)
+    //dialogFormState = record
     console.log(dialogFormState);
     setModalVisible(true)
 }
@@ -143,6 +165,7 @@ function clickOK() {
         .validate()
         .then(() => {
             if (dialogTitle.value === '新增员工') {
+                dialogFormState.bir=dialogFormState.bir?.format('YYYY-MM-DD')
                 empApi.addEmp(dialogFormState).then(res => {
                     notification['success']({
                         message: '新增成功',

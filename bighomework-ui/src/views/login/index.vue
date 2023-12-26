@@ -8,13 +8,14 @@
                 <context />
             </a-layout-content>
         </a-layout>
-        <a-layout-footer :style="footerStyle">Footer</a-layout-footer>
+        <a-layout-footer :style="footerStyle"><footer/></a-layout-footer>
     </a-layout>
 </template>
 
 <script lang="ts" setup>
 import loginHeader from '@/components/header/loginHeader.vue'
 import context from './components/context.vue';
+import footer from '@/components/footer.vue'
 import type { CSSProperties } from 'vue'
 
 const headerStyle: CSSProperties = {

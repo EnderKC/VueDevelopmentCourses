@@ -1,4 +1,4 @@
-package top.qwwq.service.util;
+package top.qwwq.utils;
 
 import java.util.UUID;
 

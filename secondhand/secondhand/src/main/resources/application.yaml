@@ -50,3 +50,9 @@ spring:
 mybatis-plus:
   type-aliases-package: top.qwwq.pojo
   mapper-locations: classpath:mapper/*.xml
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

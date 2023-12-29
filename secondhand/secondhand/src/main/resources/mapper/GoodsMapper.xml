@@ -2,4 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qwwq.mapper.GoodsMapper">
 
+    <select id="listByCriteria" parameterType="Goods" resultType="Goods">
+        select *
+        from goods
+        <where>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name like concat('%', #{goodsName}, '%')
+            </if>
+            <if test="goodsStock != null and goodeStock != ''">
+                and stock = #{goodeStock}
+            </if>
+            <if test="goodsDescription != null and goodsDescription != ''">
+                and goods_description like concat('%', #{goodsDescription}, '%')
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

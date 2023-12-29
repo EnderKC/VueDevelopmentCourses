@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
 import java.io.Serializable;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +20,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Data
 @TableName("user_info")
 public class UserInfo implements Serializable {
 
@@ -28,6 +31,8 @@ public class UserInfo implements Serializable {
     private String userId;
 
     private String address;
+
+    private String address2;
 
     private String phoneNumber;
 

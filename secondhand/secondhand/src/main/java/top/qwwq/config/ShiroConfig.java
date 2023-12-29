@@ -51,6 +51,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");      // 登录接口开发
         filterChainDefinitionMap.put("/checkToken", "anon"); // 检验token是否有效
         filterChainDefinitionMap.put("/unauthorized", "anon");  // 未授权接口开放
+        filterChainDefinitionMap.put("/sendVerificationCode","anon");
 
         // 添加自己的过滤器并且取名为jwt
         Map<String, Filter> filterMap = new LinkedHashMap<>(1);

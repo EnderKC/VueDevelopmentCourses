@@ -11,6 +11,12 @@ public interface SystemService {
      * 用户登录
      * */
     ResponseVo<JSONObject> login (String username, String password);
+
+    /*
+     * 用户注册
+     * */
+    ResponseVo<JSONObject> register (String username, String password, String password2,String email,String verificationCode);
+
     /*
      * 从token中获取用户信息
      * */

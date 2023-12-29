@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import top.qwwq.mapper.UserMapper;
 import top.qwwq.pojo.User;
 import top.qwwq.service.EmailService;
+import top.qwwq.service.IUserService;
 import top.qwwq.service.SystemService;
+import top.qwwq.utils.GetUUID;
 import top.qwwq.utils.JwtUtil;
 import top.qwwq.utils.RedisUtil;
 import top.qwwq.utils.ResponseVo;
@@ -22,10 +24,12 @@ public class SystemServiceImpl implements SystemService {
     UserMapper userMapper;
     RedisUtil redisUtil;
     EmailService emailService;
-    public SystemServiceImpl(UserMapper userMapper,RedisUtil redisUtil,EmailService emailService) {
+    IUserService userService;
+    public SystemServiceImpl(UserMapper userMapper,RedisUtil redisUtil,EmailService emailService,IUserService userService) {
         this.userMapper = userMapper;
         this.redisUtil = redisUtil;
         this.emailService = emailService;
+        this.userService = userService;
     }
 
     @Override
@@ -46,6 +50,50 @@ public class SystemServiceImpl implements SystemService {
             }
         }
         return new ResponseVo<>(-1, "登录失败");
+    }
+
+    @Override
+    public ResponseVo<JSONObject> register(String username, String password, String password2, String email,String verificationCode) {
+        // 检查验证码是否正确
+        String redisVerificationCode = (String) redisUtil.get(email);
+        if(redisVerificationCode == null){
+            return new ResponseVo<>(-1,"验证码已过期，请重新发送");
+        }
+        if(!redisVerificationCode.equals(verificationCode)){
+            return new ResponseVo<>(-1,"验证码错误",null);
+        }
+        // 检查密码是否一致
+        if(!password.equals(password2)){
+            return new ResponseVo<>(-1,"两次密码不一致");
+        }
+        // 检查用户名是否重复
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("user_name",username);
+        User user = userMapper.selectOne(userQueryWrapper);
+        if(user != null){
+            return new ResponseVo<>(-1,"用户名已存在");
+        }
+        // 检查邮箱是否重复
+        userQueryWrapper.clear();
+        userQueryWrapper.eq("user_email",email);
+        user = userMapper.selectOne(userQueryWrapper);
+        if(user != null){
+            return new ResponseVo<>(-1,"邮箱已存在");
+        }
+        if(redisVerificationCode.equals(verificationCode)){
+            // 保存用户信息
+            user = new User();
+            user.setUserId(GetUUID.getUUID());
+            user.setUserName(username);
+            user.setUserPassword(password);
+            user.setUserEmail(email);
+            user.setUserRole(0);
+            userMapper.insert(user);
+            // 创建空的用户信息
+            userService.insertUserInfo(user.getUserId());
+            return new ResponseVo<>(0,"注册成功",null);
+        }
+        return new ResponseVo<>(-1,"验证码错误",null);
     }
 
     private String getToken(User user){
@@ -72,9 +120,9 @@ public class SystemServiceImpl implements SystemService {
     public ResponseVo<String> sendVerificationCode(String email) {
         try{
             // 检查上次发送的验证码是否过期
-            if(redisUtil.hasKey(email)){
-                return new ResponseVo<>(-1,"验证码未过期，请稍后再试");
-            }
+//            if(redisUtil.hasKey(email)){
+//                return new ResponseVo<>(-1,"验证码未过期，请稍后再试");
+//            }
             // 发送验证码
             String verificationCode = emailService.sendVerificationCode(email);
             // 存入redis（过期时间 5 分钟）

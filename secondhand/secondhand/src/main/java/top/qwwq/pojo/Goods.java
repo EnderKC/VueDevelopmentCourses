@@ -1,8 +1,8 @@
 package top.qwwq.pojo;
 
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * <p>
@@ -12,8 +12,9 @@ import lombok.Setter;
  * @author EnderKC
  * @since 2023-12-26
  */
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Goods implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +25,7 @@ public class Goods implements Serializable {
 
     private String goodsDescription;
 
-    private Integer goodeStock;
+    private Integer goodsStock;
 
-    private Integer userId;
+    private String userId;
 }
